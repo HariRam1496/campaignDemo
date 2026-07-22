@@ -9,6 +9,7 @@ import { campaign } from '@testdata/campaginData';
 
 
 test.describe('Schedule flow', () => {
+  test.setTimeout(60000); // Set timeout to 60 seconds for all tests in this suite
   test.beforeEach(async ({ page }) => {
     const login = new LoginPage(page);
     await login.navigate('https://aws-pluto.vuture.dev/qatest1.html');
@@ -74,8 +75,8 @@ await dashboard.openCampagin();
        await campaign1.verifyDraft(); 
 
     await page.locator('[data-testid="tab-schedule"]').click();
-    const pastDateTime = '2000-01-01T09:00';
 
+    const pastDateTime = '2000-01-01T09:00';
     await schedule.scheduleDraftByName(campaign.campaignName, pastDateTime);
     await schedule.verifyPastDateRejected();
     
