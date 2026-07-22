@@ -67,12 +67,12 @@ test.describe('Schedule flow', () => {
     const schedule = new SchedulePage(page);
     const dashboard = new DashboardPage(page);
     
-await dashboard.openCampagin();
-       await campaign1. createCampaign(campaign.campaignName,campaign.sender,
-          campaign.subject,campaign.contactList,campaign.content
-       )
-       await campaign1.saveDraft();
-       await campaign1.verifyDraft(); 
+    await dashboard.openCampagin();
+    await campaign1.createCampaign(campaign.campaignName, campaign.sender,
+      campaign.subject, campaign.contactList, campaign.content
+    )
+    await campaign1.saveDraft();
+    await campaign1.verifyDraft(); 
 
     await page.locator('[data-testid="tab-schedule"]').click();
 
@@ -82,23 +82,28 @@ await dashboard.openCampagin();
     
   });
 
-  test('4. Send Now changes campaign status to Sent', async ({ page }) => {
+  test.only('4. Send Now changes campaign status to Sent', async ({ page }) => {
+    await page.setViewportSize({
+    width: 1366,
+    height: 768
+     })
+    const campaign1 = new CampaignPage(page);
     const schedule = new SchedulePage(page);
-    const name = `sendnow-${Date.now()}`;
-    // create draft
-    await page.locator('[data-testid="tab-new-campaign"]').click();
-    await page.locator('[data-testid="campaign-name"]').fill(name);
-    await page.locator('[data-testid="sender-email"]').fill('qa@example.com');
-    await page.locator('[data-testid="subject"]').fill('Send Now test');
-    await page.locator('[data-testid="contact-list"]').selectOption('clients');
-    await page.locator('[data-testid="content"]').fill('Content');
-    await page.locator('[data-testid="save-draft-button"]').click();
+    const dashboard = new DashboardPage(page);
+    
+    await dashboard.openCampagin();
+    await campaign1.createCampaign(campaign.campaignName, campaign.sender,
+      campaign.subject, campaign.contactList, campaign.content
+    )
+    await campaign1.saveDraft();
+    await campaign1.verifyDraft();
 
     await page.locator('[data-testid="tab-schedule"]').click();
-    await schedule.selectDraftByName(name);
+    await schedule.selectDraftByName(campaign.campaignName);
     await schedule.sendNowForSelectedDraft();
-    // Verify a Sent indicator appears in UI
-    await expect(page.getByText(/Sent|sent/i)).toBeVisible();
+    
+    // Verify campaign status changed to Sent
+    await schedule.verifySentStatusMessage();
   });
 
   test('5. Reports show Draft, Scheduled and Sent counts correctly', async ({ page }) => {

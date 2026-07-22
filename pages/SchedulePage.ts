@@ -92,6 +92,16 @@ export class SchedulePage {
 		console.log('Verification passed - rejection message found');
 	}
 
+	async verifySentStatusMessage(): Promise<void> {
+		const text = (await this.message.textContent())?.trim() || '';
+		console.log('Sent status message:', JSON.stringify(text));
+		
+		if (!text.toLowerCase().includes('sent')) {
+			throw new Error('Campaign was not sent - expected "Sent" message not found');
+		}
+		console.log('Verification passed - campaign sent successfully');
+	}
+
 	// async verifyInvalidYear(date: string) {
         
 	// 	await this.scheduleDateTimeSelect()
